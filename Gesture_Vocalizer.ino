@@ -5,6 +5,12 @@ SoftwareSerial mySerial(0,1);
 // Define I2C Address - change if reqiuired
 const int i2c_addr = 0x3F;
 
+// variables for flex sensors
+const int flexPin1 = A1;
+const int flexPin1 = A3;
+const int maxFlex = 1023;
+const int minFlex = 0;
+int threshold = 60;
 
 //Variables for Gyroscope
 int gyro_x, gyro_y, gyro_z;
@@ -25,7 +31,7 @@ int temp;
 char temp2 = '0';
 
 void setup() {
-
+ Serial.begin(9600);
   //Start I2C
   Wire.begin();
 
@@ -62,6 +68,26 @@ void setup() {
 
 void loop() {
 
+
+  int flexValue1 = analogRead(flexPin);
+  int flexValue2 = analogRead(flexPin);
+  
+  int mappedFlexValue1 = map(flexValue1, minFlex, maxFlex, 0, 90);
+  int mappedFlexValue2 = map(flexValue2, minFlex, maxFlex, 0, 90);
+  
+  if (mappedFlexValue1 >= threshold){
+    Serial.print("I want water");
+  }
+  else if (mappedFlexValue2 >= threshold){
+    Serial.print("I want food");
+  }
+  else if (mappedFlexValue2 >= threshold && mappedFlexValue1 >= threshold){
+    Serial.print("I want to go to toilet");
+  }
+  Serial.println(mappedFlexValue1 /t mappedFlexValue2);
+  
+  delay(100);
+  
   // Get data from MPU-6050
   read_mpu_6050_data();
 
